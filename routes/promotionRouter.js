@@ -4,7 +4,7 @@ const promotionRouter = express.Router();
 
 promotionRouter
   .route("/")
-  .get((req, res) => {
+  .get((req, res, next) => {
     Promotion.find()
       .then((promotions) => {
         res.statusCode = 200;
@@ -13,7 +13,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .post((req, res) => {
+  .post((req, res, next) => {
     Promotion.create(req.body)
       .then((promotion) => {
         console.log("Promotion Created ", promotion);
@@ -23,7 +23,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .put((req, res) => {
+  .put((req, res, next) => {
     res.statusCode = 403;
     res.end("PUT operation not supported on /promotions");
   })
@@ -40,7 +40,7 @@ promotionRouter
 promotionRouter
   .route("/:promotionId")
 
-  .get((req, res) => {
+  .get((req, res, next) => {
     Promotion.findById(req.params.promotionId)
       .then((promotion) => {
         res.statusCode = 200;
@@ -55,7 +55,7 @@ promotionRouter
       `Will add the promotion: ${req.body.name} with description: ${req.body.description}`
     );
   })
-  .put((req, res) => {
+  .put((req, res, next) => {
     Promotion.findByIdAndUpdate(
       req.params.promotionId,
       {
@@ -70,7 +70,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .delete((req, res) => {
+  .delete((req, res, next) => {
     Promotion.findByIdAndDelete(req.params.promotionId)
       .then((response) => {
         res.statusCode = 200;
