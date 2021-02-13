@@ -21,8 +21,8 @@ opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
-    console.log("JWT payload");
-    User.findOne({ _id: jwt_payload_._id }, (err, user) => {
+    console.log("JWT payload:", jwt_payload);
+    User.findOne({ _id: jwt_payload._id }, (err, user) => {
       if (err) {
         return done(err, false);
       } else if (user) {
@@ -34,4 +34,17 @@ exports.jwtPassport = passport.use(
   })
 );
 
-exports.verifyUser = passport.authenticate("jwt", { session: false });
+module.exports.verifyUser = passport.authenticate("jwt", { session: false });
+
+// Workshop week 3
+
+module.exports.verifyAdmin = (req, res, next) => {
+  const isAdmin = req.user.admin;
+  if (!isAdmin) {
+    const err = new Error("Your are not authorized to perform thi operation");
+    err.status = 403;
+    return next(err);
+  } else {
+    return next();
+  }
+};
