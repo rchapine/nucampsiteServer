@@ -32,7 +32,7 @@ campsiteRouter
   })
   .delete(
     authenticate.verifyUser,
-    authenticate.verifyUser,
+    authenticate.verifyAdmin,
     (req, res, next) => {
       Campsite.deleteMany()
         .then((response) => {
@@ -62,7 +62,7 @@ campsiteRouter
       `POST operation not supported on /campsites/${req.params.campsiteId}`
     );
   })
-  .put(authenticate.verifyUser, authenticate.verifyUser, (req, res, next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Campsite.findByIdAndUpdate(
       req.params.campsiteId,
       {
@@ -79,7 +79,7 @@ campsiteRouter
   })
   .delete(
     authenticate.verifyUser,
-    authenticate.verifyUser,
+    authenticate.verifyAdmin,
     (req, res, next) => {
       Campsite.findByIdAndDelete(req.params.campsiteId)
         .then((response) => {
@@ -138,7 +138,7 @@ campsiteRouter
   })
   .delete(
     authenticate.verifyUser,
-    authenticate.verifyUser,
+    authenticate.verifyAdmin,
     (req, res, next) => {
       Campsite.findById(req.params.campsiteId)
         .then((campsite) => {
@@ -196,15 +196,13 @@ campsiteRouter
     Campsite.findById(req.params.campsiteId)
       .then((campsite) => {
         if (campsite && campsite.comments.id(req.params.commentId)) {
-          if (
-            res.user._id.equals(
-              campsite.comments.id(req.params.commentId).author
-            )
-          )
-            if (req.body.rating) {
-              campsite.comments.id(req.params.commentId).rating =
-                req.body.rating;
-            }
+          if (res.user._id.equals) {
+            campsite.comments.id(req.params.commentId).author;
+          }
+
+          if (req.body.rating) {
+            campsite.comments.id(req.params.commentId).rating = req.body.rating;
+          }
           if (req.body.text) {
             campsite.comments.id(req.params.commentId).text = req.body.text;
           }
@@ -212,7 +210,7 @@ campsiteRouter
             .save()
             .then((campsite) => {
               res.statusCode = 200;
-              res.setHeader("Content-Type", "applicantion/json");
+              res.setHeader("Content-Type", "application/json");
               res.json(campsite);
             })
             .catch((err) => next(err));
@@ -240,7 +238,7 @@ campsiteRouter
               .save()
               .then((campsite) => {
                 res.statusCode = 200;
-                res.setHeader("Content-Type", "applicantion/json");
+                res.setHeader("Content-Type", "application/json");
                 res.json(campsite);
               })
               .catch((err) => next(err));

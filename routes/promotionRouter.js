@@ -54,7 +54,7 @@ promotionRouter
   .post(authenticate.verifyUser, (req, res) => {
     res.statusCode = 403;
     res.end(
-      `Will add the promotion: ${req.body.name} with description: ${req.body.description}`
+      `POST operation not supported on /promotions/${req.params.promotionId}`
     );
   })
   .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
