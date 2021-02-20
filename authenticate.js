@@ -4,6 +4,7 @@ const User = require("./models/user");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const jwt = require("jsonwebtoken");
+const FacebookTokenStrategy = require("passport-facebook-token");
 
 const config = require("./config.js");
 
@@ -39,12 +40,42 @@ module.exports.verifyUser = passport.authenticate("jwt", { session: false });
 // Workshop week 3
 
 module.exports.verifyAdmin = (req, res, next) => {
-  const isAdmin = req.user.admin;
-  if (!isAdmin) {
-    const err = new Error("Your are not authorized to perform thi operation");
+  if (!req.user.admin) {
+    const err = new Error("You are not authorized to perform this operation!");
     err.status = 403;
     return next(err);
   } else {
     return next();
   }
 };
+
+exports.facebookPassport = passport.use(
+  new FacebookTokenStrategy(
+    {
+      clientID: config.facebook.clientId,
+      clientSecret: config.facebook.clientSecret,
+    },
+    (accessToken, refreshToken, profile, done) => {
+      User.findOne({ facebookId: profile.id }, (err, user) => {
+        if (err) {
+          return done(err, false);
+        }
+        if (!err && user) {
+          return done(null, user);
+        } else {
+          user = new User({ username: profile.displayName });
+          user.facebookId = profile.id;
+          user.firstname = profile.name.givenName;
+          user.lastname = profile.name.familyName;
+          user.save((err, user) => {
+            if (err) {
+              return done(err, false);
+            } else {
+              return done(null, user);
+            }
+          });
+        }
+      });
+    }
+  )
+);
